@@ -1,0 +1,13 @@
+#################################################################
+### spark commands
+#################################################################
+
+### execute python spark-submit job
+    bin/spark-submit  --master local /root/Desktop/mystuff/pyspark/spark_mongo.py
+
+### execute java/scala  spark-submit job
+    bin/spark-submit --class com.rahul.Wordcount --master local /root/Desktop/mystuff/spark_docker/code/SparkDemoDb.jar
+
+#job with kafka 
+    bin/spark-submit --jars spark-streaming-kafka-0-8-assembly_2.11-2.2.0.jar  --master local /home/spark_mongo.py 172.20.0.2:2181 acdgild-topic
+

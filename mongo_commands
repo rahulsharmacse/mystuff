@@ -1,0 +1,61 @@
+#################################################################
+#####  login to mongodb console
+################################################################
+   mongo test -u root -p example --authenticationDatabase admin
+
+
+#################################################################
+#####  execute python spark-submit job
+################################################################
+   bin/spark-submit  --master local /root/Desktop/mystuff/pyspark/spark_mongo.py 
+
+#################################################################
+#####  execute java/scala  spark-submit job
+################################################################
+   bin/spark-submit --class com.rahul.Wordcount --master local /root/Desktop/mystuff/spark_docker/code/SparkDemoDb.jar
+
+
+#################################################################
+##### copy file form docker to local file system 
+################################################################
+   docker cp <container>:/path/to/file.ext .
+
+#################################################################
+##### copy file form local file system to docker
+################################################################
+   docker cp ./file.ext <container>:/path/to/file.ext
+
+
+#################################################################
+######  login to mongodb console
+#################################################################
+	mongo test -u root -p example --authenticationDatabase admin
+
+#################################################################
+##### create a mongodb user 
+##### do not forget to run "use dbname" command before e
+##### executing ceateUser command  
+################################################################
+	db.createUser(
+   	{
+     	  user: "test123",
+          pwd: "test123",
+          roles: [ {role:"root",
+          db:"admin"} ]
+        })
+
+
+#################################################################
+###### how to see all mongodbs 
+#################################################################
+	show dbs
+
+#################################################################
+####### how to see all collections(tables) of  db 
+##################################################################
+	show collections
+
+#################################################################
+####### how to see all documents(rows) of  a table 
+##################################################################
+	db.collention_name.find()

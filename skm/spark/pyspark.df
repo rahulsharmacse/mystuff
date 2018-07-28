@@ -1,0 +1,64 @@
+FROM java:8-jdk-alpine
+
+# PYTHON 3
+
+ENV PYTHON_VERSION 3.5.2-r2
+ENV ALPINE_OLD_VERSION 3.2
+
+# Hack: using older alpine version to install specific python version
+#RUN sed -n \
+#    's|^http://dl-cdn\.alpinelinux.org/alpine/v\([0-9]\+\.[0-9]\+\)/main$|\1|p' \
+#    /etc/apk/repositories > curr_version.tmp && \
+#    sed -i 's|'$(cat curr_version.tmp)'/main|'$ALPINE_OLD_VERSION'/main|' \
+#    /etc/apk/repositories
+# Installing given python3 version
+RUN apk update && \
+    apk add python3=$PYTHON_VERSION
+# Reverting hack
+#RUN sed -i 's|'$(cat curr_version.tmp)'/main|'$ALPINE_OLD_VERSION'/main|' \
+#    /etc/apk/repositories && \
+#    rm curr_version.tmp
+# Upgrading pip to the last compatible version
+RUN pip3 install --upgrade pip
+
+# Installing IPython
+#RUN pip install ipython 
+
+# GENERAL DEPENDENCIES
+
+RUN apk update && \
+    apk add curl && \
+    apk add bash
+
+# HADOOP
+
+ENV HADOOP_VERSION 2.7.2
+ENV HADOOP_HOME /usr/hadoop-$HADOOP_VERSION
+ENV HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+ENV PATH $PATH:$HADOOP_HOME/bin
+RUN curl -sL --retry 3 \
+    "http://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz" \
+    | gunzip \
+    | tar -x -C /usr/ && \
+    rm -rf $HADOOP_HOME/share/doc
+
+# SPARK
+
+ENV SPARK_VERSION 2.2.0
+ENV SPARK_PACKAGE spark-$SPARK_VERSION-bin-without-hadoop
+ENV SPARK_HOME /usr/spark-$SPARK_VERSION
+ENV PYSPARK_PYTHON python3 
+ENV SPARK_DIST_CLASSPATH="$HADOOP_HOME/etc/hadoop/*:$HADOOP_HOME/share/hadoop/common/lib/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/hdfs/lib/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/yarn/lib/*:$HADOOP_HOME/share/hadoop/yarn/*:$HADOOP_HOME/share/hadoop/mapreduce/lib/*:$HADOOP_HOME/share/hadoop/mapreduce/*:$HADOOP_HOME/share/hadoop/tools/lib/*"
+ENV PATH $PATH:$SPARK_HOME/bin
+RUN curl -sL --retry 3 \
+    "http://d3kbcqa49mib13.cloudfront.net/$SPARK_PACKAGE.tgz" \
+    | tar xz -C /usr/ && \
+    mv /usr/$SPARK_PACKAGE $SPARK_HOME
+#    rm -rf $SPARK_HOME/examples $SPARK_HOME/ec2 
+RUN curl -O http://central.maven.org/maven2/org/mongodb/mongodb-driver-core/3.7.0/mongodb-driver-core-3.7.0.jar
+RUN curl -O http://central.maven.org/maven2/org/mongodb/mongo-java-driver/3.7.0/mongo-java-driver-3.7.0.jar
+RUN curl -O http://central.maven.org/maven2/org/mongodb/spark/mongo-spark-connector_2.11/2.2.2/mongo-spark-connector_2.11-2.2.2.jar
+RUN curl -o $SPARK_HOME/park-streaming-kafka-0-8-assembly_2.11-2.2.0.jar -O http://central.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-8-assembly_2.11/2.2.0/spark-streaming-kafka-0-8-assembly_2.11-2.2.0.jar
+ENV PYSPARK_DRIVER_PYTHON python3
+#ADD ./spark_mongo.py  /home
+WORKDIR /$SPARK_HOME

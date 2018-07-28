@@ -1,0 +1,50 @@
+############################################################################################
+############            Docker command cheat sheet                 
+############################################################################################
+
+### Create a docker image from DockerFile
+    docker build -t turner_robot_demo .
+
+### Run you image as container
+    docker run turner_robot_demo
+
+### To see all containers, including those not running
+    docker ps -a
+
+### To stop running all container
+    docker stop $(docker ps -aq)
+
+### To delete a conatiner
+    docker rm <container id>
+
+### To delete all the containers
+    docker ps -q -a | xargs docker rm
+
+### Delete a single docker image
+    docker rmi <image_id>
+
+### Delete all the images
+    docker rmi $(docker images | awk '{print $3}')
+
+### Inspect the image file system
+    docker run -t -i turner_robot_demo /bin/bash
+
+### How to find IP of a docker
+    docker inspect --format '{{ .NetworkSettings.IPAddress }}' spark_docker_spark-master_1 
+
+### Another method to find IP of a docker
+    $ docker exec -it ${container_id} bash
+    $ cat /etc/hosts
+
+### Mount a volume
+    docker run -it -v <local directory path>:<path of directory in docker>  <docker_image_name>
+    
+    docker run -it -v /root/Desktop/mystuff/Machine_Learning:/home  ml 
+
+### copy file form docker to local file system 
+    docker cp <container>:/path/to/file.ext .
+
+### copy file form local file system to docker
+    docker cp ./file.ext <container>:/path/to/file.ext
+
+############################################################################################# 
