@@ -47,4 +47,17 @@
 ### copy file form local file system to docker
     docker cp ./file.ext <container>:/path/to/file.ext
 
+### Docker logs default path (can be retrieved via docker logs <container_id> command)
+    /var/lib/docker/containers/[container-id]/[container-id]-json.log
+
+### Collecting docker logs
+    1.The –tail flag will show the last N lines of logs:
+      docker logs <container_id> --tail N
+      
+    2.To see how much space each container's log is taking up, use this:
+      docker ps -qa | xargs docker inspect --format='{{.LogPath}}' | xargs ls -hl
+      
+### Detailed information about a container
+    docker inspect <container_id>
+
 ############################################################################################# 
