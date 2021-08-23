@@ -20,6 +20,9 @@
 ### To delete all the containers
     docker ps -q -a | xargs docker rm
 
+### Delete all volumes
+    docker volume rm $(docker volume ls -q)
+    
 ### Delete a single docker image
     docker rmi <image_id>
 
